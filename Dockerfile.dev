@@ -1,0 +1,30 @@
+FROM node:24-bullseye AS builder
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      git \
+      build-essential \
+      ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+# Clone Stockfish and compile with AVX2
+WORKDIR /usr/src/stockfish
+RUN git clone --depth=1 https://github.com/official-stockfish/Stockfish.git . \
+ && cd src \
+ && make clean build ARCH=x86-64-avx2
+
+FROM node:24-bullseye-slim
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/stockfish/src/stockfish /usr/local/bin/stockfish
+RUN chmod +x /usr/local/bin/stockfish
+
+# now install your Node deps
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "dev"]

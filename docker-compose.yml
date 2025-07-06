@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  stockfish-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # mount your code so edits are live in the container
+    volumes:
+      - ./src:/app/src
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
