@@ -30,7 +30,7 @@ app.use(
   })
 )
 
-const DELAY_MS = 10000
+const DELAY_MS = 5000
 
 engine.onInfo(async (line: string) => {
   if (line.startsWith('bestmove')) {
