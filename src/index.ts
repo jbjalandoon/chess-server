@@ -167,9 +167,18 @@ stockfishIo.on('connection', (socket) => {
     }
     stockfishIo.emit('update-votes', votes)
   })
+
+  socket.on('resign', () => {
+    if (votes.hasOwnProperty('resign')) {
+      votes['resign']++
+    } else {
+      votes['resign'] = 1
+    }
+    stockfishIo.emit('update-votes', votes)
+  })
 })
 
-const INTERNET_DELAY_MS = 5000
+const INTERNET_DELAY_MS = 8000
 let internetEventTime: null | number = null
 let internetDelay: null | number = null
 
@@ -240,6 +249,18 @@ const startVoting = async () => {
     delayUntilVotesEnd = null
     return startVoting()
     // return s'tartVoting()
+  }
+
+  if (winner === 'resign') {
+    const internetColor: Color = (internet + stockfish) % 2 === 0 ? 'w' : 'b'
+    stockfishIo.emit('resign', stockfishChess.turn() === 'b' ? 'w' : 'b')
+    await delay(5000)
+    stockfish++
+    stockfishChess.reset()
+    stockfishIo.emit('board-reset', internetColor === 'w' ? 'b' : 'w')
+    stockfishIo.emit('update-score', internet, stockfish)
+    stockfishIo.emit('reset-votes')
+    return startVoting()
   }
 
   const [from, to] = winner.split('-')
