@@ -199,7 +199,7 @@ internetIo.on('connection', (socket) => {
   })
 
   socket.emit('sync-board', internetChess.fen())
-  socket.emit('update-score', internet, stockfish)
+  socket.emit('update-score', black, white)
   socket.emit('start-voting', Date.now(), internetEventTime)
 
   socket.on('vote', (sourceSquare: string, targetSquare: string) => {
