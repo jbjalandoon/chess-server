@@ -1,8 +1,6 @@
 name: Build and deploy a container to an Azure Container Registry
 
 on:
-  push:
-    branches: ["master"]
   workflow_dispatch:
 
 jobs:
